@@ -1,0 +1,24 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Entry from '../../layouts/Entry.astro';
+import YouTube from '../../components/YouTube.astro';
+import { youtubeId } from '../../lib/content';
+
+export async function getStaticPaths() {
+  return (await getCollection('music')).map((m) => ({ params: { id: m.id }, props: { piece: m } }));
+}
+const { piece } = Astro.props as { piece: CollectionEntry<'music'> };
+const { Content } = await render(piece);
+const { kind, artist, audio, source, url, title } = piece.data;
+const yt = url ? youtubeId(url) : null;
+---
+<Entry entry={piece} eyebrow={kind === 'original' ? 'Original piece' : 'Listening'}>
+  <Fragment slot="meta">
+    {artist && <p class="muted">by {artist}</p>}
+  </Fragment>
+  {audio && <audio controls preload="none" src={audio}></audio>}
+  {yt && <YouTube id={yt} title={title} />}
+  {url && !yt && <p><a href={url}>Listen ↗</a></p>}
+  {source && <p class="small"><a href={source}>CSound source (.csd)</a></p>}
+  <Content />
+</Entry>

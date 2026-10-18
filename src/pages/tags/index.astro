@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import { getTagMap } from '../../lib/content';
+const tags = [...(await getTagMap()).entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+---
+<Base title="Tags">
+  <SectionHeader title="Tags" intro="One tag set across projects, notes, links and music." />
+  <ul class="cloud">
+    {tags.map(([t, entries]) => (
+      <li><a class="tag" href={`/tags/${t}/`}>#{t}</a> <span class="muted small">{entries.length}</span></li>
+    ))}
+  </ul>
+</Base>
+<style>
+  .cloud { display: flex; flex-wrap: wrap; gap: 0.6rem 1.1rem; list-style: none; padding: 0; max-width: var(--max); }
+  .cloud .tag { font-size: 0.95rem; }
+</style>

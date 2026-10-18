@@ -1,0 +1,22 @@
+---
+// Lightweight YouTube facade: a thumbnail link that becomes an embed on click.
+// Works without JS (falls back to opening YouTube).
+const { id, title } = Astro.props as { id: string; title: string };
+---
+<div class="yt" data-yt={id}>
+  <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" width="480" height="360" />
+  <a class="play" href={`https://www.youtube.com/watch?v=${id}`} aria-label={`Play video: ${title}`}><span></span></a>
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>('.yt[data-yt]').forEach((el) => {
+    el.querySelector('a')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      const f = document.createElement('iframe');
+      f.src = `https://www.youtube-nocookie.com/embed/${el.dataset.yt}?autoplay=1`;
+      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      f.allowFullscreen = true;
+      f.title = el.querySelector('a')?.getAttribute('aria-label') ?? 'YouTube video';
+      el.replaceChildren(f);
+    });
+  });
+</script>

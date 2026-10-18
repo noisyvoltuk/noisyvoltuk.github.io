@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import Stream from '../../components/Stream.astro';
+import { getTagMap, KIND_LABEL, type AnyEntry, type Kind } from '../../lib/content';
+
+export async function getStaticPaths() {
+  return [...(await getTagMap()).entries()].map(([tag, entries]) => ({ params: { tag }, props: { entries } }));
+}
+const { tag } = Astro.params;
+const { entries } = Astro.props as { entries: AnyEntry[] };
+const kinds = (['projects', 'notes', 'links', 'music'] as Kind[]).filter((k) => entries.some((e) => e.collection === k));
+---
+<Base title={`#${tag}`} description={`Everything tagged ${tag}.`}>
+  <header class="prose">
+    <p class="eyebrow"><a href="/tags/">Tags</a></p>
+    <h1>#{tag}</h1>
+    <p class="muted">{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</p>
+  </header>
+  <div class="prose">
+    {kinds.map((k) => (
+      <section>
+        <h2>{KIND_LABEL[k]}{k === 'music' ? '' : 's'}</h2>
+        <Stream entries={entries.filter((e) => e.collection === k)} />
+      </section>
+    ))}
+  </div>
+</Base>

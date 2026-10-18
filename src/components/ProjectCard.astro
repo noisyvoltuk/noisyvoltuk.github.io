@@ -1,0 +1,18 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Tags from './Tags.astro';
+const { project } = Astro.props as { project: CollectionEntry<'projects'> };
+const { title, summary, hero, heroAlt, tags, status } = project.data;
+---
+<article class="card">
+  <a href={`/projects/${project.id}/`} tabindex="-1" aria-hidden="true">
+    <Image src={hero} alt={heroAlt} width={720} />
+  </a>
+  <div class="card-body">
+    <div><span class={`status status-${status}`}>{status}</span></div>
+    <h3><a href={`/projects/${project.id}/`}>{title}</a></h3>
+    <p>{summary}</p>
+    <Tags tags={tags} />
+  </div>
+</article>

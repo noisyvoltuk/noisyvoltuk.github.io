@@ -1,0 +1,9 @@
+---
+import { slugTag } from '../lib/content';
+const { tags = [] } = Astro.props as { tags?: string[] };
+---
+{tags.length > 0 && (
+  <ul class="tags">
+    {tags.map((t) => <li><a class="tag" href={`/tags/${slugTag(t)}/`}>#{t}</a></li>)}
+  </ul>
+)}

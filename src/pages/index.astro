@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Stream from '../components/Stream.astro';
+import { getAll, getSorted } from '../lib/content';
+import { SITE } from '../lib/site';
+
+const projects = await getSorted('projects');
+const featured = projects.filter((p) => p.data.featured);
+const shown = (featured.length ? featured : projects).slice(0, 4);
+const recent = (await getAll()).slice(0, 15);
+---
+<Base>
+  <section class="intro prose">
+    <h1>Hi, I'm Andy.</h1>
+    <p class="lede">
+      I build synths, write CSound, and tinker with electronics and software. This is where
+      projects, build notes, saved links and music end up.
+    </p>
+    <p class="small"><a href="/now/">What I'm doing now</a> · <a href={SITE.github}>GitHub</a> · <a href="/rss.xml">RSS</a></p>
+  </section>
+
+  <section>
+    <div class="head"><h2>Featured projects</h2><a href="/projects/">All projects →</a></div>
+    <div class="grid">{shown.map((p) => <ProjectCard project={p} />)}</div>
+  </section>
+
+  <section class="prose">
+    <div class="head"><h2>Recent activity</h2><a href="/rss.xml">RSS</a></div>
+    <Stream entries={recent} />
+  </section>
+</Base>
+<style>
+  .intro { margin-bottom: 1rem; }
+  .lede { font-size: 1.15rem; color: var(--muted); margin: 0 0 0.5rem; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-top: 2.5rem; }
+  .head h2 { margin: 0 0 1rem; }
+  .head a { font-size: 0.9rem; }
+</style>

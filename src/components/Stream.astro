@@ -1,0 +1,22 @@
+---
+import { entryUrl, entrySummary, fmtDate, isoDate, KIND_LABEL, type AnyEntry } from '../lib/content';
+const { entries } = Astro.props as { entries: AnyEntry[] };
+---
+<ul class="stream">
+  {entries.map((e) => (
+    <li>
+      <div class="meta">
+        <span class="kind">{KIND_LABEL[e.collection]}</span>
+        <time datetime={isoDate(e.data.date)}>{fmtDate(e.data.date)}</time>
+      </div>
+      <div>
+        <h3>
+          {e.collection === 'links'
+            ? <a href={e.data.url} rel="noopener">{e.data.title} <span aria-hidden="true">↗</span></a>
+            : <a href={entryUrl(e)}>{e.data.title}</a>}
+        </h3>
+        {entrySummary(e) && <p>{entrySummary(e)}</p>}
+      </div>
+    </li>
+  ))}
+</ul>

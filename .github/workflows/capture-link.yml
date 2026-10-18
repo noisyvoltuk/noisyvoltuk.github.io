@@ -1,0 +1,73 @@
+name: Capture link from issue
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: capture-link-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    # Only the repo owner can capture links: issue templates apply the "link"
+    # label for anyone who opens an issue, so check the author too.
+    if: >-
+      github.event.issue.state == 'open' &&
+      contains(github.event.issue.labels.*.name, 'link') &&
+      github.event.issue.user.login == github.repository_owner
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - id: capture
+        run: node scripts/capture-link.mjs
+
+      - name: Commit
+        if: steps.capture.outputs.result == 'created'
+        env:
+          FILE: ${{ steps.capture.outputs.file }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$FILE"
+          git commit -m "Add link from #$NUMBER"
+          for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+
+      # Pushes made with GITHUB_TOKEN don't trigger other workflows, so start the deploy explicitly.
+      - name: Rebuild site
+        if: steps.capture.outputs.result == 'created'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref "${{ github.event.repository.default_branch }}"
+
+      - name: Close issue
+        if: steps.capture.outputs.result == 'created' || steps.capture.outputs.result == 'exists'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.issue.number }}
+          FILE: ${{ steps.capture.outputs.file }}
+          TITLE: ${{ steps.capture.outputs.title }}
+        run: |
+          if [ "${{ steps.capture.outputs.result }}" = "created" ]; then
+            gh issue close "$NUMBER" --reason completed --comment "Saved as \`$FILE\` (\"$TITLE\"). The site is rebuilding: https://${{ github.repository_owner }}.github.io/links/"
+          else
+            gh issue close "$NUMBER" --reason completed
+          fi
+
+      - name: Report bad URL
+        if: steps.capture.outputs.result == 'invalid'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.issue.number }}
+          ERROR: ${{ steps.capture.outputs.error }}
+        run: gh issue comment "$NUMBER" --body "$ERROR Edit the title to a URL, then remove and re-add the \`link\` label."

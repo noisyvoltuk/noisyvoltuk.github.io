@@ -1,0 +1,12 @@
+---
+const { title, intro, rss } = Astro.props as { title: string; intro?: string; rss?: string };
+---
+<header class="section-header prose">
+  <h1>{title}</h1>
+  {intro && <p class="muted">{intro}</p>}
+  {rss && <p class="small"><a href={rss}>RSS feed for this section</a></p>}
+</header>
+<style>
+  .section-header { margin-bottom: 2rem; }
+  .section-header p { margin: 0.25rem 0; }
+</style>

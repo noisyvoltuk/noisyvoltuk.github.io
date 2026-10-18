@@ -1,0 +1,12 @@
+---
+import Base from './Base.astro';
+import { fmtDate } from '../lib/content';
+const { frontmatter } = Astro.props;
+---
+<Base title={frontmatter.title} description={frontmatter.description}>
+  <article class="prose">
+    <h1>{frontmatter.title}</h1>
+    {frontmatter.updated && <p class="muted small">Updated {fmtDate(new Date(frontmatter.updated))}</p>}
+    <slot />
+  </article>
+</Base>

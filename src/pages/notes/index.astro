@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import Stream from '../../components/Stream.astro';
+import { getSorted } from '../../lib/content';
+const notes = await getSorted('notes');
+---
+<Base title="Notes" rss={{ href: '/notes/rss.xml', title: 'Notes' }}>
+  <SectionHeader title="Notes" intro="Short build logs and things I've learned along the way." rss="/notes/rss.xml" />
+  <div class="prose"><Stream entries={notes} /></div>
+</Base>

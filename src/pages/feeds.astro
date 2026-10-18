@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+const feeds = [
+  ['/rss.xml', 'Everything'],
+  ['/projects/rss.xml', 'Projects'],
+  ['/notes/rss.xml', 'Notes'],
+  ['/links/rss.xml', 'Links'],
+  ['/music/rss.xml', 'Music'],
+];
+---
+<Base title="Feeds">
+  <article class="prose">
+    <h1>Feeds</h1>
+    <p class="muted">Subscribe in any RSS reader.</p>
+    <ul>{feeds.map(([href, label]) => <li><a href={href}>{label}</a> <code>{href}</code></li>)}</ul>
+  </article>
+</Base>

@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import Stream from '../../components/Stream.astro';
+import { getSorted } from '../../lib/content';
+const music = await getSorted('music');
+const originals = music.filter((m) => m.data.kind === 'original');
+const listening = music.filter((m) => m.data.kind === 'listening');
+---
+<Base title="Music" rss={{ href: '/music/rss.xml', title: 'Music' }}>
+  <SectionHeader title="Music" intro="My own CSound pieces, and what I'm listening to." rss="/music/rss.xml" />
+  <div class="prose">
+    <h2>Pieces</h2>
+    {originals.length ? <Stream entries={originals} /> : <p class="muted">Nothing yet.</p>}
+    <h2>Listening</h2>
+    {listening.length ? <Stream entries={listening} /> : <p class="muted">Nothing yet.</p>}
+  </div>
+</Base>

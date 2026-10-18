@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import LinkItem from '../../components/LinkItem.astro';
+import { getSorted } from '../../lib/content';
+const links = await getSorted('links');
+---
+<Base title="Links" rss={{ href: '/links/rss.xml', title: 'Links' }}>
+  <SectionHeader title="Links" intro="Things worth keeping: articles, tools, datasheets and videos." rss="/links/rss.xml" />
+  <div class="prose">{links.map((l) => <LinkItem link={l} />)}</div>
+</Base>

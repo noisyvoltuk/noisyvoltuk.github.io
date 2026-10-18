@@ -1,0 +1,76 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Tags from '../../components/Tags.astro';
+import Stream from '../../components/Stream.astro';
+import { fmtDate, isoDate, related } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((p) => ({ params: { id: p.id }, props: { project: p } }));
+}
+const { project } = Astro.props as { project: CollectionEntry<'projects'> };
+const { title, summary, hero, heroAlt, gallery, audio, repo, tags, status, date, updated } = project.data;
+const { Content } = await render(project);
+const og = await getImage({ src: hero, width: 1200, format: 'jpeg' });
+const relatedNotes = await related(project, ['notes']);
+const relatedLinks = await related(project, ['links']);
+const relatedOther = await related(project, ['projects', 'music']);
+---
+<Base title={title} description={summary} image={og.src}>
+  <article>
+    <header class="prose">
+      <p class="eyebrow">Project · <span class={`status status-${status}`}>{status}</span></p>
+      <h1>{title}</h1>
+      <p class="lede">{summary}</p>
+      <p class="muted small">
+        Started <time datetime={isoDate(date)}>{fmtDate(date)}</time>
+        {updated && <> · updated <time datetime={isoDate(updated)}>{fmtDate(updated)}</time></>}
+        {repo && <> · <a href={repo}>Source on GitHub</a></>}
+      </p>
+      <Tags tags={tags} />
+    </header>
+
+    <Image class="hero" src={hero} alt={heroAlt} widths={[640, 1024, 1360]} sizes="(max-width: 68rem) 100vw, 68rem" loading="eager" />
+
+    {audio && (
+      <figure class="audio prose">
+        <figcaption class="eyebrow">{audio.title ?? 'Listen'}</figcaption>
+        <audio controls preload="none" src={audio.src}></audio>
+      </figure>
+    )}
+
+    <div class="prose body"><Content /></div>
+
+    {gallery.length > 0 && (
+      <section>
+        <h2>Gallery</h2>
+        <div class="gallery">
+          {gallery.map((g) => (
+            <figure>
+              <a href={g.src.src}><Image src={g.src} alt={g.alt} width={600} /></a>
+              {g.alt && <figcaption>{g.alt}</figcaption>}
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {(relatedNotes.length > 0 || relatedLinks.length > 0 || relatedOther.length > 0) && (
+      <section class="prose related">
+        {relatedNotes.length > 0 && <><h2>Build notes</h2><Stream entries={relatedNotes} /></>}
+        {relatedLinks.length > 0 && <><h2>Related links</h2><Stream entries={relatedLinks} /></>}
+        {relatedOther.length > 0 && <><h2>See also</h2><Stream entries={relatedOther.slice(0, 5)} /></>}
+      </section>
+    )}
+  </article>
+</Base>
+<style>
+  .lede { font-size: 1.15rem; color: var(--muted); margin: 0 0 0.5rem; }
+  .eyebrow .status { margin-left: 0.25rem; }
+  .hero { width: 100%; border-radius: var(--radius); margin: 1.75rem 0; aspect-ratio: 16/8; object-fit: cover; }
+  .audio { margin: 0 0 1.5rem; }
+  .audio figcaption { margin-bottom: 0.4rem; }
+  .body :global(img) { border-radius: var(--radius); }
+</style>

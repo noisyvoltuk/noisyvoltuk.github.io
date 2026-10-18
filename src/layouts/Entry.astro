@@ -1,0 +1,21 @@
+---
+import Base from './Base.astro';
+import Tags from '../components/Tags.astro';
+import Stream from '../components/Stream.astro';
+import { fmtDate, isoDate, related, type AnyEntry } from '../lib/content';
+
+const { entry, eyebrow, description } = Astro.props as { entry: AnyEntry; eyebrow: string; description?: string };
+const rel = (await related(entry, ['projects', 'notes', 'music', 'links'])).slice(0, 6);
+---
+<Base title={entry.data.title} description={description}>
+  <article class="prose">
+    <header>
+      <p class="eyebrow">{eyebrow} · <time datetime={isoDate(entry.data.date)}>{fmtDate(entry.data.date)}</time></p>
+      <h1>{entry.data.title}</h1>
+      <slot name="meta" />
+      <Tags tags={entry.data.tags} />
+    </header>
+    <slot />
+    {rel.length > 0 && (<section><h2>Related</h2><Stream entries={rel} /></section>)}
+  </article>
+</Base>
