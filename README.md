@@ -3,6 +3,13 @@
 Personal site for projects, build notes, saved links and music. Built with [Astro](https://astro.build),
 deployed to GitHub Pages by GitHub Actions. No server.
 
+## First-time setup
+
+With [Git](https://git-scm.com/download/win) and [GitHub CLI](https://cli.github.com/) installed and `gh auth login` done:
+
+- Windows: `powershell -ExecutionPolicy Bypass -File scripts\setup-repo.ps1`
+- macOS/Linux: `./scripts/setup-repo.sh`
+
 ## Run locally
 
 ```sh
