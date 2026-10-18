@@ -5,7 +5,7 @@ import SectionHeader from '../../components/SectionHeader.astro';
 import { getSorted } from '../../lib/content';
 const projects = await getSorted('projects');
 ---
-<Base title="Projects" rss={{ href: '/projects/rss.xml', title: 'Projects' }}>
-  <SectionHeader title="Projects" intro="Things I've built or am building." rss="/projects/rss.xml" />
+<Base title="Synths" rss={{ href: '/projects/rss.xml', title: 'Synth builds' }}>
+  <SectionHeader title="Synths" intro="Synthesizers and music hardware I've built or am building." rss="/projects/rss.xml" />
   <div class="grid">{projects.map((p) => <ProjectCard project={p} />)}</div>
 </Base>

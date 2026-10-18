@@ -6,7 +6,7 @@ OWNER="${OWNER:-noisyvoltuk}"
 REPO="${REPO:-$OWNER.github.io}"
 
 gh repo create "$OWNER/$REPO" --public --source=. --remote=origin --push \
-  --description "Personal site: projects, notes, links and music"
+  --description "Synthesizers, CSound and electronic music"
 
 # Pages, built by the Deploy site workflow rather than from a branch.
 gh api -X POST "repos/$OWNER/$REPO/pages" -f build_type=workflow >/dev/null \

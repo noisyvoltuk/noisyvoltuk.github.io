@@ -14,14 +14,14 @@ const recent = (await getAll()).slice(0, 15);
   <section class="intro prose">
     <h1>Hi, I'm Andy.</h1>
     <p class="lede">
-      I build synths, write CSound, and tinker with electronics and software. This is where
-      projects, build notes, saved links and music end up.
+      I build synthesizers and make music with them, mostly in CSound. This is where the synths,
+      the build notes, the pieces and the things I'm listening to end up.
     </p>
     <p class="small"><a href="/now/">What I'm doing now</a> · <a href={SITE.github}>GitHub</a> · <a href="/rss.xml">RSS</a></p>
   </section>
 
   <section>
-    <div class="head"><h2>Featured projects</h2><a href="/projects/">All projects →</a></div>
+    <div class="head"><h2>Synths</h2><a href="/projects/">All synth builds →</a></div>
     <div class="grid">{shown.map((p) => <ProjectCard project={p} />)}</div>
   </section>
 

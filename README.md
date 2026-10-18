@@ -1,6 +1,6 @@
 # noisyvoltuk.github.io
 
-Personal site for projects, build notes, saved links and music. Built with [Astro](https://astro.build),
+Music and synthesizer site: synth builds, build notes, saved links and CSound pieces. Built with [Astro](https://astro.build),
 deployed to GitHub Pages by GitHub Actions. No server.
 
 ## First-time setup

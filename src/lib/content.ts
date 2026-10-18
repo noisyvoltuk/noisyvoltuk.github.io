@@ -4,7 +4,7 @@ export type Kind = 'projects' | 'notes' | 'links' | 'music';
 export type AnyEntry = CollectionEntry<Kind>;
 
 export const KIND_LABEL: Record<Kind, string> = {
-  projects: 'Project',
+  projects: 'Synth',
   notes: 'Note',
   links: 'Link',
   music: 'Music',

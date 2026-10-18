@@ -6,6 +6,6 @@ import { getSorted } from '../../lib/content';
 const links = await getSorted('links');
 ---
 <Base title="Links" rss={{ href: '/links/rss.xml', title: 'Links' }}>
-  <SectionHeader title="Links" intro="Things worth keeping: articles, tools, datasheets and videos." rss="/links/rss.xml" />
+  <SectionHeader title="Links" intro="Synth and sound-design links worth keeping: articles, tools, datasheets and videos." rss="/links/rss.xml" />
   <div class="prose">{links.map((l) => <LinkItem link={l} />)}</div>
 </Base>

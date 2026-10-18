@@ -5,7 +5,7 @@ $ErrorActionPreference = 'Stop'
 $Owner = if ($env:OWNER) { $env:OWNER } else { 'noisyvoltuk' }
 $Repo = if ($env:REPO) { $env:REPO } else { "$Owner.github.io" }
 
-gh repo create "$Owner/$Repo" --public --source=. --remote=origin --push --description "Personal site: projects, notes, links and music"
+gh repo create "$Owner/$Repo" --public --source=. --remote=origin --push --description "Synthesizers, CSound and electronic music"
 if ($LASTEXITCODE) { throw 'gh repo create failed' }
 
 # Pages, built by the Deploy site workflow rather than from a branch.
