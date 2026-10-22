@@ -1,0 +1,157 @@
+# Sveltia CMS: browser editor at /admin. Every save is a commit to main, which redeploys the site.
+# Field names and types mirror src/content.config.ts; keep the two in step.
+backend:
+  name: github
+  repo: noisyvoltuk/noisyvoltuk.github.io
+  branch: main
+  # Sign in with a fine-grained personal access token, so no OAuth server is needed.
+  auth_methods: [token]
+  commit_messages:
+    create: "Add {{collection}} “{{slug}}” via editor"
+    update: "Update {{collection}} “{{slug}}” via editor"
+    delete: "Delete {{collection}} “{{slug}}” via editor"
+    uploadMedia: "Upload “{{path}}” via editor"
+    deleteMedia: "Delete “{{path}}” via editor"
+
+site_url: https://noisyvoltuk.github.io
+display_url: https://noisyvoltuk.github.io
+
+# Default for uploads that don't set their own folder.
+media_folder: public/media
+public_folder: /media
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: projects
+    label: Synths
+    label_singular: Synth
+    description: Synth and music-hardware builds. Featured ones appear on the home page.
+    folder: src/content/projects
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{slug}}"
+    preview_path: projects/{{slug}}/
+    summary: "{{title}} ({{status}})"
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: summary, label: Summary, widget: text, hint: One or two sentences for cards and feeds. }
+      - { name: date, label: Started, widget: datetime, type: date, format: YYYY-MM-DD, default: "{{now}}" }
+      - { name: updated, label: Updated, widget: datetime, type: date, format: YYYY-MM-DD, required: false }
+      - name: hero
+        label: Hero image
+        widget: image
+        media_folder: /src/assets/projects
+        public_folder: ../../assets/projects
+      - { name: heroAlt, label: Hero image description, widget: string, required: false }
+      - name: gallery
+        label: Gallery
+        widget: list
+        required: false
+        summary: "{{fields.alt}}"
+        fields:
+          - name: src
+            label: Image
+            widget: image
+            media_folder: /src/assets/projects
+            public_folder: ../../assets/projects
+          - { name: alt, label: Caption, widget: string, required: false }
+      - name: audio
+        label: Audio
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - name: src
+            label: File
+            widget: file
+            accept: audio/*
+            media_folder: /public/audio
+            public_folder: /audio
+          - { name: title, label: Title, widget: string, required: false }
+      - { name: repo, label: Repository URL, widget: string, required: false, pattern: ["^https?://", "Must be a URL"] }
+      - { name: tags, label: Tags, widget: list, required: false, hint: "Lowercase, one per box. Shared with notes, links and music." }
+      - name: status
+        label: Status
+        widget: select
+        options: [idea, active, paused, done, archived]
+        default: active
+      - { name: featured, label: Featured on home page, widget: boolean, default: false }
+      - { name: body, label: Write-up, widget: markdown }
+
+  - name: notes
+    label: Notes
+    label_singular: Note
+    description: Short build logs and sound-design notes.
+    folder: src/content/notes
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: notes/{{filename}}/
+    summary: "{{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: datetime, type: date, format: YYYY-MM-DD, default: "{{now}}" }
+      - { name: tags, label: Tags, widget: list, required: false }
+      - { name: body, label: Body, widget: markdown }
+
+  - name: links
+    label: Links
+    label_singular: Link
+    description: Saved links. YouTube URLs embed automatically.
+    folder: src/content/links
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: url, label: URL, widget: string, pattern: ["^https?://", "Must be a URL"] }
+      - { name: title, label: Title, widget: string }
+      - { name: comment, label: Comment, widget: string, required: false, hint: One line. }
+      - { name: date, label: Date, widget: datetime, type: date, format: YYYY-MM-DD, default: "{{now}}" }
+      - { name: tags, label: Tags, widget: list, required: false }
+      # Set by the issue quick-capture workflow; kept so edits don't drop it.
+      - { name: issue, label: Captured from issue, widget: number, value_type: int, required: false, readonly: true }
+
+  - name: music
+    label: Music
+    label_singular: Music entry
+    description: Your own CSound pieces, and things you're listening to.
+    folder: src/content/music
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: music/{{filename}}/
+    summary: "{{title}} ({{kind}})"
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: datetime, type: date, format: YYYY-MM-DD, default: "{{now}}" }
+      - name: kind
+        label: Kind
+        widget: select
+        options:
+          - { label: My piece, value: original }
+          - { label: Listening, value: listening }
+        default: original
+      - { name: artist, label: Artist, widget: string, required: false, hint: For things you're listening to. }
+      - name: audio
+        label: Audio file
+        widget: file
+        required: false
+        accept: audio/*
+        media_folder: /public/audio
+        public_folder: /audio
+      - { name: source, label: CSound source (.csd) URL, widget: string, required: false, pattern: ["^https?://", "Must be a URL"] }
+      - { name: url, label: "Listen URL (YouTube, Bandcamp…)", widget: string, required: false, pattern: ["^https?://", "Must be a URL"] }
+      - { name: tags, label: Tags, widget: list, required: false }
+      - { name: body, label: Notes, widget: markdown, required: false }
