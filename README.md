@@ -37,6 +37,19 @@ and are referenced as `/audio/<file>`. Featured projects (`featured: true`) appe
 
 The /now page is `src/pages/now.md`.
 
+## Editing in the browser
+
+Go to https://noisyvoltuk.github.io/admin/ and sign in with a GitHub personal access token.
+It's a [Sveltia CMS](https://sveltiacms.app/) editor with forms for synths, notes, links and music.
+Every save is a commit to `main`, which redeploys the site in a minute or two. Images you upload
+for synths go to `src/assets/projects/`, and audio goes to `public/audio/`.
+
+To make the token: GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token.
+Choose **Only select repositories** → `noisyvoltuk.github.io`, and under Repository permissions set
+**Contents** to *Read and write*. The editor remembers it in that browser.
+
+The editor is configured in `public/admin/config.yml`. Keep its fields in step with `src/content.config.ts`.
+
 ## Quick capture
 
 Open an issue with the **Save a link** template (or any issue labelled `link`):
