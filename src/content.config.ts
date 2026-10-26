@@ -61,4 +61,22 @@ const music = defineCollection({
   }),
 });
 
-export const collections = { projects, notes, links, music };
+// Tunes, riffs and beats I want to recreate. Shown on /riffs/, grouped by status.
+const riffs = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/riffs' }),
+  schema: z.object({
+    title: z.string(),
+    artist: z.string().optional(),
+    // Reference recording: YouTube, Bandcamp, a tab or score…
+    url: z.url().optional(),
+    type: z.enum(['tune', 'riff', 'beat', 'sound']).default('riff'),
+    status: z.enum(['wanted', 'learning', 'recreated']).default('wanted'),
+    date: z.coerce.date(),
+    // My version once it's done: a music entry, audio file or video.
+    result: z.string().optional(),
+    tags,
+    issue: z.number().optional(),
+  }),
+});
+
+export const collections = { projects, notes, links, music, riffs };

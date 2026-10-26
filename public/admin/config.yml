@@ -155,3 +155,45 @@ collections:
       - { name: url, label: "Listen URL (YouTube, Bandcamp…)", widget: string, required: false, pattern: ["^https?://", "Must be a URL"] }
       - { name: tags, label: Tags, widget: list, required: false }
       - { name: body, label: Notes, widget: markdown, required: false }
+
+  - name: riffs
+    label: Riffs to recreate
+    label_singular: Riff
+    description: Tunes, riffs, beats and sounds you want to recreate. Shown on /riffs/, grouped by status.
+    folder: src/content/riffs
+    extension: md
+    format: frontmatter
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    preview_path: riffs/
+    summary: "{{title}} ({{status}})"
+    sortable_fields: [date, title, status]
+    view_groups:
+      - { label: Status, field: status }
+    fields:
+      - { name: title, label: Title, widget: string, hint: "The tune, or which part of it, e.g. \"Blue Monday (drum intro)\"." }
+      - { name: artist, label: Artist, widget: string, required: false }
+      - { name: url, label: Reference URL, widget: string, required: false, pattern: ["^https?://", "Must be a URL"], hint: "YouTube, Bandcamp, a tab or score. YouTube embeds automatically." }
+      - name: type
+        label: Type
+        widget: select
+        options:
+          - { label: Tune, value: tune }
+          - { label: Riff, value: riff }
+          - { label: Beat, value: beat }
+          - { label: Sound / patch, value: sound }
+        default: riff
+      - name: status
+        label: Status
+        widget: select
+        options:
+          - { label: Wanted, value: wanted }
+          - { label: Working on, value: learning }
+          - { label: Recreated, value: recreated }
+        default: wanted
+      - { name: date, label: Added, widget: datetime, type: date, format: YYYY-MM-DD, default: "{{now}}" }
+      - { name: result, label: My version, widget: string, required: false, hint: "Once it's done: a link to your music entry (e.g. /music/2026-11-01-my-take/), audio file or video." }
+      - { name: tags, label: Tags, widget: list, required: false }
+      # Set by the issue quick-capture workflow; kept so edits don't drop it.
+      - { name: issue, label: Captured from issue, widget: number, value_type: int, required: false, readonly: true }
+      - { name: body, label: Notes, widget: markdown, required: false, hint: "Key, tempo, which synth to try, what's tricky." }

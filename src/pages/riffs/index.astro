@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import RiffItem from '../../components/RiffItem.astro';
+import { getSorted, RIFF_STATUS } from '../../lib/content';
+const riffs = await getSorted('riffs');
+const groups = (Object.keys(RIFF_STATUS) as (keyof typeof RIFF_STATUS)[])
+  .map((status) => ({ status, label: RIFF_STATUS[status], entries: riffs.filter((r) => r.data.status === status) }))
+  .filter((g) => g.entries.length);
+---
+<Base title="Riffs to recreate">
+  <SectionHeader title="Riffs to recreate" intro="Tunes, riffs, beats and sounds I want to recreate on my own synths." />
+  <div class="prose">
+    {groups.length
+      ? groups.map((g) => (
+          <section>
+            <h2>{g.label} <span class="muted small">{g.entries.length}</span></h2>
+            {g.entries.map((r) => <RiffItem riff={r} />)}
+          </section>
+        ))
+      : <p class="muted">Nothing yet.</p>}
+  </div>
+</Base>

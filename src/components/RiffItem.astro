@@ -1,0 +1,41 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { fmtDate, isoDate, youtubeId } from '../lib/content';
+import Tags from './Tags.astro';
+import YouTube from './YouTube.astro';
+const { riff } = Astro.props as { riff: CollectionEntry<'riffs'> };
+const { title, artist, url, type, date, result, tags } = riff.data;
+const { Content } = await render(riff);
+const yt = url ? youtubeId(url) : null;
+const host = url ? new URL(url).hostname.replace(/^www\./, '') : null;
+---
+<article class="riff" id={riff.id}>
+  <h3>
+    {title}
+    {artist && <span class="artist">{artist}</span>}
+  </h3>
+  <p class="meta small">
+    <span class="type">{type}</span>
+    {url && !yt && <a href={url} rel="noopener">Reference on {host} ↗</a>}
+    {result && <a href={result}>My version →</a>}
+  </p>
+  {yt && <YouTube id={yt} title={title} />}
+  {riff.body?.trim() && <div class="notes"><Content /></div>}
+  <div class="foot">
+    <time class="muted small" datetime={isoDate(date)}>Added {fmtDate(date)}</time>
+    <Tags tags={tags} />
+  </div>
+</article>
+<style>
+  .riff { padding: 1.1rem 0; border-top: 1px solid var(--border); }
+  .riff:first-child { border-top: 0; }
+  h3 { margin: 0; font-size: 1.05rem; }
+  .artist { font-weight: 400; color: var(--muted); margin-left: 0.35rem; }
+  .artist::before { content: '· '; }
+  .meta { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin: 0.3rem 0; }
+  .type { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 0.05rem 0.5rem; }
+  .notes :global(p) { margin: 0.35rem 0; }
+  .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+  .foot :global(.tags) { margin: 0; }
+  .riff :global(.yt) { max-width: 28rem; margin: 0.4rem 0; }
+</style>
