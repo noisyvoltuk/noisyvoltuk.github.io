@@ -1,0 +1,91 @@
+name: Capture riff from issue
+
+on:
+  issues:
+    types: [opened, labeled]
+  # Creates the labels the "Riff to recreate" template needs, when this file lands on main.
+  push:
+    branches: [main]
+    paths: [.github/workflows/capture-riff.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: capture-riff-${{ github.event.issue.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  labels:
+    if: github.event_name != 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh label create recreate --color 8b5cf6 --description "Quick-capture: riff to recreate" --force
+          for t in tune riff beat sound; do gh label create "$t" --color c4b5fd --description "Riff type" --force; done
+
+  capture:
+    # Only the repo owner can capture riffs: issue templates apply the "recreate"
+    # label for anyone who opens an issue, so check the author too.
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.state == 'open' &&
+      contains(github.event.issue.labels.*.name, 'recreate') &&
+      github.event.issue.user.login == github.repository_owner
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - id: capture
+        run: node scripts/capture-riff.mjs
+
+      - name: Commit
+        if: steps.capture.outputs.result == 'created'
+        env:
+          FILE: ${{ steps.capture.outputs.file }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$FILE"
+          git commit -m "Add riff from #$NUMBER"
+          for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+
+      # Pushes made with GITHUB_TOKEN don't trigger other workflows, so start the deploy explicitly.
+      - name: Rebuild site
+        if: steps.capture.outputs.result == 'created'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref "${{ github.event.repository.default_branch }}"
+
+      - name: Close issue
+        if: steps.capture.outputs.result == 'created' || steps.capture.outputs.result == 'exists'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.issue.number }}
+          FILE: ${{ steps.capture.outputs.file }}
+          TITLE: ${{ steps.capture.outputs.title }}
+        run: |
+          if [ "${{ steps.capture.outputs.result }}" = "created" ]; then
+            gh issue close "$NUMBER" --reason completed --comment "Saved as \`$FILE\` (\"$TITLE\"). The site is rebuilding: https://${{ github.repository_owner }}.github.io/riffs/"
+          else
+            gh issue close "$NUMBER" --reason completed
+          fi
+
+      - name: Report missing title
+        if: steps.capture.outputs.result == 'invalid'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.issue.number }}
+          ERROR: ${{ steps.capture.outputs.error }}
+        run: gh issue comment "$NUMBER" --body "$ERROR Edit the title, then remove and re-add the \`recreate\` label."

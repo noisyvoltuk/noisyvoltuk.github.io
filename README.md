@@ -1,6 +1,6 @@
 # noisyvoltuk.github.io
 
-Music and synthesizer site: synth builds, build notes, saved links and CSound pieces. Built with [Astro](https://astro.build),
+Music and synthesizer site: synth builds, build notes, saved links, CSound pieces, and riffs to recreate. Built with [Astro](https://astro.build),
 deployed to GitHub Pages by GitHub Actions. No server.
 
 ## First-time setup
@@ -22,7 +22,7 @@ Needs Node 22.22 or newer.
 
 ## Adding content
 
-Everything is Markdown in `src/content/`. Tags are shared across all four collections; every tag
+Everything is Markdown in `src/content/`. Tags are shared across all five collections; every tag
 gets a page at `/tags/<tag>/`, and project pages list notes and links that share their tags.
 
 | Collection | Folder | Frontmatter |
@@ -31,16 +31,20 @@ gets a page at `/tags/<tag>/`, and project pages list notes and links that share
 | notes | `src/content/notes/<date>-<slug>.md` | `title`, `date`, `tags`, then the Markdown body |
 | links | `src/content/links/<date>-<slug>.md` | `url`, `title`, `comment`, `date`, `tags`. YouTube URLs embed automatically |
 | music | `src/content/music/<date>-<slug>.md` | `title`, `date`, `kind` (`original` or `listening`), `artist`, `audio`, `source` (.csd URL), `url`, `tags` |
+| riffs | `src/content/riffs/<date>-<slug>.md` | `title`, `artist`, `url` (reference), `type` (tune, riff, beat, sound), `status` (wanted, learning, recreated), `date`, `result` (link to my version), `tags`, then notes |
 
 Project images go in `src/assets/projects/` (Astro resizes them). Audio files go in `public/audio/`
 and are referenced as `/audio/<file>`. Featured projects (`featured: true`) appear on the home page.
+
+Riffs are a to-do list: they show on `/riffs/`, grouped by status, and on tag pages, but not in the
+home page stream or the main feed.
 
 The /now page is `src/pages/now.md`.
 
 ## Editing in the browser
 
 Go to https://noisyvoltuk.github.io/admin/ and sign in with a GitHub personal access token.
-It's a [Sveltia CMS](https://sveltiacms.app/) editor with forms for synths, notes, links and music.
+It's a [Sveltia CMS](https://sveltiacms.app/) editor with forms for synths, notes, links, music and riffs.
 Every save is a commit to `main`, which redeploys the site in a minute or two. Images you upload
 for synths go to `src/assets/projects/`, and audio goes to `public/audio/`.
 
@@ -62,7 +66,20 @@ The *Capture link from issue* workflow fetches the page title (YouTube titles co
 writes `src/content/links/<date>-<slug>.md`, commits it, closes the issue, and starts a deploy.
 Only issues opened by the repo owner are captured.
 
-This works from the GitHub mobile app too.
+### Riffs to recreate
+
+Open an issue with the **Riff to recreate** template (or any issue labelled `recreate`):
+
+- **Title:** `Artist - Tune`, e.g. `New Order - Blue Monday (drum intro)`. Or just paste a YouTube or
+  Bandcamp link and the title and artist are taken from the page.
+- **Body:** notes, plus a reference link (the first URL becomes the entry's link)
+- **Labels:** `tune`, `riff`, `beat` or `sound` sets the type (default riff); other labels become tags
+
+The *Capture riff from issue* workflow writes `src/content/riffs/<date>-<slug>.md` with status
+`wanted`, commits it, closes the issue and starts a deploy. Change the status in the editor as you go.
+The labels are created by the same workflow when it first lands on `main`.
+
+Both work from the GitHub mobile app too.
 
 ## Feeds
 

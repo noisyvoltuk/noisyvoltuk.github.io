@@ -5,7 +5,7 @@ import { getTagMap } from '../../lib/content';
 const tags = [...(await getTagMap()).entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
 ---
 <Base title="Tags">
-  <SectionHeader title="Tags" intro="One tag set across projects, notes, links and music." />
+  <SectionHeader title="Tags" intro="One tag set across synths, notes, links, music and riffs." />
   <ul class="cloud">
     {tags.map(([t, entries]) => (
       <li><a class="tag" href={`/tags/${t}/`}>#{t}</a> <span class="muted small">{entries.length}</span></li>
