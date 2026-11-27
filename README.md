@@ -20,6 +20,16 @@ npm run build      # static output in dist/
 
 Needs Node 22.22 or newer.
 
+## The home page
+
+The home page is a links page: my profiles as buttons, then everything (synths, notes, music)
+in one undated "Now and then" list. Post only when I feel like it; there's no schedule.
+
+- Profile links (GitHub, YouTube, Spotify, Pinterest) and forums live in `src/lib/site.ts`.
+  Fill in a `url` to show one; leave it `''` to hide it.
+- The top menu is `SECTIONS` in the same file. It's empty on purpose. The section pages
+  (/music/, /notes/, /links/, /riffs/, /tags/, /now/) still build and their URLs still work.
+
 ## Adding content
 
 Everything is Markdown in `src/content/`. Tags are shared across all five collections; every tag
