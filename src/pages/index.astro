@@ -1,39 +1,49 @@
 ---
 import Base from '../layouts/Base.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 import Stream from '../components/Stream.astro';
-import { getAll, getSorted } from '../lib/content';
-import { SITE } from '../lib/site';
+import { getAll } from '../lib/content';
+import { PROFILES, FORUMS } from '../lib/site';
 
-const projects = await getSorted('projects');
-const featured = projects.filter((p) => p.data.featured);
-const shown = (featured.length ? featured : projects).slice(0, 4);
-const recent = (await getAll()).slice(0, 15);
+const profiles = PROFILES.filter((p) => p.url);
+const forums = FORUMS.filter((f) => f.url);
+// Synths, notes and music in one list, no dates. Links and riffs stay on their own pages.
+const things = await getAll(['projects', 'notes', 'music']);
 ---
 <Base>
   <section class="intro prose">
     <h1>Hi, I'm Andy.</h1>
-    <p class="lede">
-      I build synthesizers and make music with them, mostly in CSound. This is where the synths,
-      the build notes, the pieces and the things I'm listening to end up.
-    </p>
-    <p class="small"><a href="/now/">What I'm doing now</a> · <a href={SITE.github}>GitHub</a> · <a href="/rss.xml">RSS</a></p>
+    <p class="lede">I build synthesizers and make music with them, mostly in CSound.</p>
   </section>
 
-  <section>
-    <div class="head"><h2>Synths</h2><a href="/projects/">All synth builds →</a></div>
-    <div class="grid">{shown.map((p) => <ProjectCard project={p} />)}</div>
-  </section>
+  <ul class="profiles">
+    {profiles.map((p) => <li><a href={p.url} rel="me noopener">{p.label}</a></li>)}
+  </ul>
 
-  <section class="prose">
-    <div class="head"><h2>Recent activity</h2><a href="/rss.xml">RSS</a></div>
-    <Stream entries={recent} />
-  </section>
+  {forums.length > 0 && (
+    <section>
+      <h2 class="label">Also found at</h2>
+      <ul class="profiles small">
+        {forums.map((f) => <li><a href={f.url} rel="me noopener">{f.label}</a></li>)}
+      </ul>
+    </section>
+  )}
+
+  {things.length > 0 && (
+    <section class="prose">
+      <h2 class="label">Now and then</h2>
+      <Stream entries={things} showDate={false} />
+    </section>
+  )}
 </Base>
 <style>
-  .intro { margin-bottom: 1rem; }
-  .lede { font-size: 1.15rem; color: var(--muted); margin: 0 0 0.5rem; }
-  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-top: 2.5rem; }
-  .head h2 { margin: 0 0 1rem; }
-  .head a { font-size: 0.9rem; }
+  .intro { margin-bottom: 1.5rem; }
+  .lede { font-size: 1.15rem; color: var(--muted); margin: 0; }
+  .profiles { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; max-width: 30rem; }
+  .profiles a {
+    display: block; padding: 0.8rem 1rem; border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--text); text-decoration: none; font-weight: 600;
+  }
+  .profiles a:hover { border-color: var(--accent); color: var(--accent); }
+  .profiles.small a { padding: 0.55rem 1rem; font-weight: 500; font-size: 0.95rem; }
+  .label { margin: 2.75rem 0 0.75rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
 </style>

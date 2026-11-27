@@ -1,13 +1,13 @@
 ---
 import { entryUrl, entrySummary, fmtDate, isoDate, KIND_LABEL, type AnyEntry } from '../lib/content';
-const { entries } = Astro.props as { entries: AnyEntry[] };
+const { entries, showDate = true } = Astro.props as { entries: AnyEntry[]; showDate?: boolean };
 ---
-<ul class="stream">
+<ul class:list={['stream', { undated: !showDate }]}>
   {entries.map((e) => (
     <li>
       <div class="meta">
         <span class="kind">{KIND_LABEL[e.collection]}</span>
-        <time datetime={isoDate(e.data.date)}>{fmtDate(e.data.date)}</time>
+        {showDate && <time datetime={isoDate(e.data.date)}>{fmtDate(e.data.date)}</time>}
       </div>
       <div>
         <h3>
