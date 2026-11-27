@@ -23,7 +23,7 @@ Commit and push (or add the file in the GitHub web editor). It shows up under
 "Now and then" a minute or two later. Dates only set the order and aren't shown.
 If there are no posts, that section doesn't appear.
 
-Copy `_drafts/example-post.md` as a starting point. Images go in `images/`.
+Copy `_posts/2026-11-27-sample-post.md` as a starting point. Images go in `images/`.
 
 ## Files
 
