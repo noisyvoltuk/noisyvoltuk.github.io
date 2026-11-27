@@ -1,0 +1,13 @@
+title: NoisyVolt
+author: Andy Morris
+intro: I build synthesizers and make music with them, mostly in CSound.
+description: Synthesizers, CSound and electronic music by Andy Morris (noisyvoltuk).
+url: https://noisyvoltuk.github.io
+baseurl: ""
+
+permalink: /posts/:title/
+markdown: kramdown
+timezone: Europe/London
+
+exclude:
+  - README.md
