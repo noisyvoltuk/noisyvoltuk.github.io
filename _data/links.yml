@@ -1,0 +1,17 @@
+# Where to find me. These are the buttons on the home page.
+# Fill in a url to show a link. Delete a line, or leave its url empty, to hide it.
+main:
+  - name: GitHub
+    url: https://github.com/noisyvoltuk
+  - name: YouTube
+    url: ""   # e.g. https://www.youtube.com/@your-channel
+  - name: Spotify
+    url: ""   # e.g. https://open.spotify.com/user/your-id
+  - name: Pinterest
+    url: ""   # e.g. https://www.pinterest.com/your-profile
+
+# Forums and communities, shown as a smaller list. Empty list = section hidden.
+# To add one, replace [] with lines like:
+#   - name: CSound forum
+#     url: https://forum.csound.com/u/your-name
+forums: []

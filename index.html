@@ -1,0 +1,31 @@
+---
+layout: default
+---
+<header>
+  <h1>Hi, I'm Andy.</h1>
+  <p class="intro">{{ site.intro }}</p>
+</header>
+
+<ul class="links">
+  {% for link in site.data.links.main %}{% if link.url and link.url != "" %}
+  <li><a href="{{ link.url }}" rel="me noopener">{{ link.name }}</a></li>
+  {% endif %}{% endfor %}
+</ul>
+
+{% capture forum_items %}{% for link in site.data.links.forums %}{% if link.url and link.url != "" %}
+  <li><a href="{{ link.url }}" rel="me noopener">{{ link.name }}</a></li>{% endif %}{% endfor %}{% endcapture %}
+{% assign forum_check = forum_items | strip %}
+{% if forum_check != "" %}
+<h2>Also found at</h2>
+<ul class="links small">{{ forum_items }}
+</ul>
+{% endif %}
+
+{% if site.posts.size > 0 %}
+<h2>Now and then</h2>
+<ul class="posts">
+  {% for post in site.posts %}
+  <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
